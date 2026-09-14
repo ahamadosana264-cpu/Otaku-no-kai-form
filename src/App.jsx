@@ -16,7 +16,7 @@ const SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbzculpkO9QZSbC0WtSlJET8xSZE9TjZZcc2ds0sIyvRz866Wv6aGQ9kvznipGAdTNZ1Zg/exec'
 
 /* =========================================================
-   DONNÉES ÉCOLES
+   DONNÉES ÉCOLES INP-HB
 ========================================================= */
 
 const schoolData = {
@@ -81,26 +81,58 @@ const schoolData = {
     },
     years: ['1ère année', '2ème année', '3ème année'],
   },
-};
+}
+
+/* =========================================================
+   CENTRES D'INTÉRÊT & PÔLES
+========================================================= */
+
 const interestsList = [
-  'Mangas & Animés',
-  'Jeux vidéo',
-  'Culture japonaise & langue',
-  'Dessin / Manga',
-  'J-Pop / K-Pop',
-  'Quiz & concours',
-  'Création de contenu',
-  'Autre',
+  { label: 'Mangas & Animés', icon: '🎌', desc: 'Shonen, Seinen, Isekai, discussions' },
+  { label: 'Jeux vidéo', icon: '🎮', desc: 'Tournois, casual, rétro, e-sport' },
+  { label: 'Culture japonaise & langue', icon: '⛩️', desc: 'Traditions, calligraphie, Nihongo' },
+  { label: 'Dessin / Manga', icon: '🎨', desc: 'Illustration, fanarts, création de planches' },
+  { label: 'J-Pop / K-Pop', icon: '🎵', desc: 'Openings, blind tests, musique asiatique' },
+  { label: 'Quiz & concours', icon: '🏆', desc: 'Défis de culture otaku et anime trivia' },
+  { label: 'Création de contenu', icon: '🎬', desc: 'Vidéos, AMV, montages, rédaction' },
+  { label: 'Autre', icon: '✨', desc: 'Cosplay, figurines, nouvelles idées' },
 ]
 
 const polesList = [
-  'Communication & Médias',
-  'Culture japonaise & Langue',
-  'Organisation & Événementiel',
+  {
+    name: 'Communication & Médias',
+    icon: '📢',
+    desc: 'Création de visuels, gestion des réseaux sociaux (Instagram, WhatsApp, TikTok) et couverture médiatique.',
+    disabled: false,
+  },
+  {
+    name: 'Culture japonaise & Langue',
+    icon: '⛩️',
+    desc: 'Animation d’ateliers d’apprentissage de la langue japonaise et partage de la culture traditionnelle.',
+    disabled: true,
+  },
+  {
+    name: 'Organisation & Événementiel',
+    icon: '🎪',
+    desc: 'Coordination des projections, tournois gaming, soirées à thèmes, logistique et accueil des participants.',
+    disabled: false,
+  },
 ]
 
 /* =========================================================
-   IMAGES
+   ÉTAPES DU STEPPER
+========================================================= */
+
+const STEPS = [
+  { id: 1, label: 'Profil', icon: '👤' },
+  { id: 2, label: 'Passions', icon: '🔥' },
+  { id: 3, label: 'Rôle', icon: '🤝' },
+  { id: 4, label: 'Règles', icon: '📜' },
+  { id: 5, label: 'Cotisation', icon: '💰' },
+]
+
+/* =========================================================
+   IMAGES D'ARRIÈRE-PLAN
 ========================================================= */
 
 const stepImages = {
@@ -125,7 +157,7 @@ function App() {
   const [message, setMessage] = useState('')
   const [erreur, setErreur] = useState('')
 
-  const [form, setForm] = useState({
+  const initialForm = {
     nom: '',
     matricule: '',
     ecole: '',
@@ -134,36 +166,26 @@ function App() {
     annee: '',
     whatsapp: '',
     email: '',
-
     interests: [],
-
     typeMembre: '',
-
     poles: [],
-
     engagement: false,
-
     cotisation: false,
-  })
+  }
 
-  /* =======================================================
-     MODIFICATION DES CHAMPS
-  ======================================================= */
+  const [form, setForm] = useState(initialForm)
 
+  /* Modification générique */
   const modifierChamp = (champ, valeur) => {
     setForm((ancien) => ({
       ...ancien,
       [champ]: valeur,
     }))
-
     setErreur('')
     setMessage('')
   }
 
-  /* =======================================================
-     ÉCOLE
-  ======================================================= */
-
+  /* Gestion hiérarchique école / cycle / filière */
   const changerEcole = (ecole) => {
     setForm((ancien) => ({
       ...ancien,
@@ -172,13 +194,8 @@ function App() {
       filiere: '',
       annee: '',
     }))
-
     setErreur('')
   }
-
-  /* =======================================================
-     CYCLE
-  ======================================================= */
 
   const changerCycle = (cycle) => {
     setForm((ancien) => ({
@@ -187,13 +204,8 @@ function App() {
       filiere: '',
       annee: '',
     }))
-
     setErreur('')
   }
-
-  /* =======================================================
-     FILIÈRE
-  ======================================================= */
 
   const changerFiliere = (filiere) => {
     setForm((ancien) => ({
@@ -201,18 +213,13 @@ function App() {
       filiere,
       annee: '',
     }))
-
     setErreur('')
   }
 
-  /* =======================================================
-     CENTRES D'INTÉRÊT
-  ======================================================= */
-
+  /* Sélection des centres d'intérêt */
   const toggleInterest = (interest) => {
     setForm((ancien) => {
       const existe = ancien.interests.includes(interest)
-
       return {
         ...ancien,
         interests: existe
@@ -220,268 +227,144 @@ function App() {
           : [...ancien.interests, interest],
       }
     })
-
     setErreur('')
   }
 
-  /* =======================================================
-     PÔLES
-  ======================================================= */
-
+  /* Choix des pôles (max 2) */
   const togglePole = (pole) => {
     setForm((ancien) => {
       const existe = ancien.poles.includes(pole)
-
       if (existe) {
         return {
           ...ancien,
           poles: ancien.poles.filter((item) => item !== pole),
         }
       }
-
       if (ancien.poles.length >= 2) {
         return ancien
       }
-
       return {
         ...ancien,
         poles: [...ancien.poles, pole],
       }
     })
-
     setErreur('')
   }
 
-  /* =======================================================
-     TYPE DE MEMBRE
-  ======================================================= */
-
+  /* Type de membre */
   const changerTypeMembre = (type) => {
     setForm((ancien) => ({
       ...ancien,
       typeMembre: type,
       poles: type === 'actif' ? ancien.poles : [],
     }))
-
     setErreur('')
   }
 
-  /* =======================================================
-     VALIDATION NOM
-  ======================================================= */
-
-  const nomValide = (nom) => {
-    return /^\s*\S+(?:\s+\S+)+\s*$/.test(nom.trim())
-  }
-
-  /* =======================================================
-     VALIDATION MATRICULE
-     Format : 25INP12345
-======================================================= */
-
-  const matriculeValide = (matricule) => {
-    return /^\d{2}INP\d{5}$/i.test(matricule.trim())
-  }
-
-  /* =======================================================
-     VALIDATION WHATSAPP
-     Exactement 10 chiffres
-======================================================= */
-
-  const whatsappValide = (whatsapp) => {
-    return /^\d{10}$/.test(whatsapp.replace(/\s/g, ''))
-  }
-
-  /* =======================================================
-     VALIDATION ÉCOLE / CYCLE / FILIÈRE / ANNÉE
-  ======================================================= */
+  /* Règles de validation */
+  const nomValide = (nom) => /^\s*\S+(?:\s+\S+)+\s*$/.test(nom.trim())
+  const matriculeValide = (matricule) => /^\d{2}INP\d{5}$/i.test(matricule.trim())
+  const whatsappValide = (whatsapp) => /^\d{10}$/.test(whatsapp.replace(/\s/g, ''))
 
   const formationValide = () => {
-    if (!form.ecole) {
-      return false
-    }
-
+    if (!form.ecole) return false
     const data = schoolData[form.ecole]
+    if (!data) return false
 
-    if (!data) {
-      return false
-    }
-
-    /* CPGE : pas de cycle */
+    /* Cas spécifique CPGE (pas de cycle) */
     if (form.ecole === 'CPGE') {
-      return (
-        form.filiere !== '' &&
-        form.annee !== ''
-      )
+      return form.filiere !== '' && form.annee !== ''
     }
 
     /* Autres écoles */
-    if (!form.cycle || !form.annee) {
-      return false
-    }
-
+    if (!form.cycle || !form.annee) return false
     const filieres = data.cycles[form.cycle]
-
-    /* Cycle sans filière */
-    if (filieres === null) {
-      return true
-    }
-
-    /* Cycle avec filière */
+    if (filieres === null) return true
     return form.filiere !== ''
   }
 
-  /* =======================================================
-     VALIDATION DE CHAQUE ÉTAPE
-  ======================================================= */
-
+  /* Contrôle de validité pour activer le bouton Suivant */
   const etapeValide = () => {
-  if (step === 1) {
-    return (
-      nomValide(form.nom) &&
-      matriculeValide(form.matricule) &&
-      formationValide() &&
-      whatsappValide(form.whatsapp)
-    )
+    if (step === 1) {
+      return (
+        nomValide(form.nom) &&
+        matriculeValide(form.matricule) &&
+        formationValide() &&
+        whatsappValide(form.whatsapp)
+      )
+    }
+    if (step === 2) return form.interests.length > 0
+    if (step === 3) return form.typeMembre !== ''
+    if (step === 4) return form.engagement
+    if (step === 5) return form.cotisation
+    return true
   }
 
-  if (step === 2) {
-    return form.interests.length > 0
-  }
-
-  if (step === 3) {
-    return form.typeMembre !== ''
-  }
-
-  if (step === 4) {
-    return form.engagement
-  }
-
-  if (step === 5) {
-    return form.cotisation
-  }
-
-  return true
-}
-
+  /* Validation explicite avec affichage des messages d'erreur */
   const validerEtape = () => {
     setErreur('')
 
-    /* -----------------------------------------
-       ÉTAPE 1 : Informations personnelles
-    ----------------------------------------- */
-
     if (step === 1) {
       if (!nomValide(form.nom)) {
-        setErreur(
-          'Veuillez entrer votre nom et prénom(s). Un seul nom n’est pas suffisant.'
-        )
+        setErreur('Veuillez entrer votre nom et prénom(s) complets (au moins 2 mots).')
         return false
       }
-
       const matricule = form.matricule.trim().toUpperCase()
-
       if (!matriculeValide(matricule)) {
-        setErreur(
-          'Le matricule doit respecter le format 25INP12345.'
-        )
+        setErreur('Le matricule doit respecter le format officiel (Ex. 25INP12345).')
         return false
       }
-
       if (!formationValide()) {
-        setErreur(
-          'Veuillez compléter correctement votre école, cycle, filière et année.'
-        )
+        setErreur('Veuillez sélectionner votre école, cycle, filière et année d’études.')
         return false
       }
-
       if (!whatsappValide(form.whatsapp)) {
-        setErreur(
-          'Le numéro WhatsApp doit contenir exactement 10 chiffres.'
-        )
+        setErreur('Le numéro WhatsApp doit comporter exactement 10 chiffres.')
         return false
       }
-
       return true
     }
-
-    /* -----------------------------------------
-       ÉTAPE 2 : Centres d'intérêt
-    ----------------------------------------- */
 
     if (step === 2) {
       if (form.interests.length === 0) {
-        setErreur(
-          'Sélectionnez au moins un centre d’intérêt.'
-        )
+        setErreur('Sélectionnez au moins un centre d’intérêt.')
         return false
       }
-
       return true
     }
-
-    /* -----------------------------------------
-       ÉTAPE 3 : Participation
-    ----------------------------------------- */
 
     if (step === 3) {
       if (!form.typeMembre) {
-        setErreur(
-          'Veuillez choisir votre type de membre.'
-        )
+        setErreur('Veuillez sélectionner un type de membre (Membre ou Membre actif).')
         return false
       }
-
-      if (
-        form.typeMembre === 'actif' &&
-        form.poles.length > 2
-      ) {
-        setErreur(
-          'Vous pouvez sélectionner au maximum deux pôles.'
-        )
+      if (form.typeMembre === 'actif' && form.poles.length > 2) {
+        setErreur('Vous pouvez sélectionner au maximum deux pôles.')
         return false
       }
-
       return true
     }
-
-    /* -----------------------------------------
-       ÉTAPE 4 : Engagement
-    ----------------------------------------- */
 
     if (step === 4) {
       if (!form.engagement) {
-        setErreur(
-          'Vous devez accepter les engagements du club pour continuer.'
-        )
+        setErreur('Vous devez accepter les engagements du club pour poursuivre.')
         return false
       }
-
       return true
     }
 
-    /* -----------------------------------------
-       ÉTAPE 5 : Cotisation
-    ----------------------------------------- */
-
     if (step === 5) {
       if (!form.cotisation) {
-        setErreur(
-          'Veuillez confirmer que vous avez pris connaissance de la cotisation.'
-        )
+        setErreur('Veuillez confirmer que vous avez pris connaissance de la cotisation.')
         return false
       }
-
       return true
     }
 
     return true
   }
 
-  /* =======================================================
-     ENVOI GOOGLE SHEETS
-  ======================================================= */
-
+  /* Envoi vers Google Sheets via Apps Script */
   const envoyerInscription = async () => {
     setChargement(true)
     setErreur('')
@@ -489,178 +372,110 @@ function App() {
 
     const donnees = {
       nomPrenom: form.nom.trim(),
-
-      matricule: form.matricule
-        .trim()
-        .toUpperCase(),
-
+      matricule: form.matricule.trim().toUpperCase(),
       ecole: form.ecole,
-
-      cycle: form.cycle,
-
-      filiere: form.filiere,
-
+      cycle: form.cycle || 'N/A',
+      filiere: form.filiere || 'N/A',
       annee: form.annee,
-
       whatsapp: form.whatsapp.replace(/\s/g, '').trim(),
-
-      email: form.email.trim(),
-
+      email: form.email ? form.email.trim() : 'Non renseigné',
       centresInteret: form.interests.join(' ; '),
-
-      typeMembre:
-        form.typeMembre === 'actif'
-          ? 'Membre actif'
-          : 'Membre',
-
-      poles:
-        form.poles.length > 0
-          ? form.poles.join(' ; ')
-          : 'Aucun pour le moment',
+      typeMembre: form.typeMembre === 'actif' ? 'Membre actif' : 'Membre',
+      poles: form.poles.length > 0 ? form.poles.join(' ; ') : 'Aucun pour le moment',
     }
 
     try {
       const reponse = await fetch(SCRIPT_URL, {
         method: 'POST',
-
         headers: {
-          'Content-Type':
-            'text/plain;charset=utf-8',
+          'Content-Type': 'text/plain;charset=utf-8',
         },
-
         body: JSON.stringify(donnees),
       })
 
       const resultat = await reponse.json()
 
       if (!resultat.succes) {
-        setErreur(
-          resultat.message ||
-            'Une erreur est survenue lors de l’inscription.'
-        )
-
+        setErreur(resultat.message || 'Une erreur est survenue lors de l’inscription.')
         return false
       }
 
-      setMessage(
-        'Inscription enregistrée avec succès.'
-      )
-
+      setMessage('Inscription enregistrée avec succès.')
       return true
     } catch (error) {
       console.error(error)
-
-      setErreur(
-        'Impossible de contacter le serveur. Vérifiez votre connexion Internet puis réessayez.'
-      )
-
+      setErreur('Impossible de contacter le serveur. Vérifiez votre connexion Internet puis réessayez.')
       return false
     } finally {
       setChargement(false)
     }
   }
 
-  /* =======================================================
-     BOUTON SUIVANT
-  ======================================================= */
-
+  /* Navigation Suivant */
   const suivant = async () => {
-    if (!validerEtape()) {
-      return
-    }
-
-    /*
-      ÉTAPE 5 = dernière étape avant confirmation.
-      On enregistre donc l'inscription ici.
-    */
+    if (!validerEtape()) return
 
     if (step === 5) {
       const succes = await envoyerInscription()
-
       if (succes) {
         setStep(6)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       }
-
       return
     }
 
     setStep((ancien) => ancien + 1)
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  /* =======================================================
-     BOUTON RETOUR
-  ======================================================= */
-
+  /* Navigation Précédent */
   const precedent = () => {
     setErreur('')
     setMessage('')
-
-    setStep((ancien) =>
-      Math.max(ancien - 1, 0)
-    )
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
+    setStep((ancien) => Math.max(ancien - 1, 0))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  /* =======================================================
-     DONNÉES FORMATION
-  ======================================================= */
+  const recommencer = () => {
+    setForm(initialForm)
+    setStep(0)
+    setErreur('')
+    setMessage('')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
+  /* Données dérivées pour l'école sélectionnée */
   const currentSchool = schoolData[form.ecole]
-
-  const cycles =
-    currentSchool?.cycles
-      ? Object.keys(currentSchool.cycles)
-      : []
-
+  const cycles = currentSchool?.cycles ? Object.keys(currentSchool.cycles) : []
   const filieres =
     form.ecole === 'CPGE'
       ? currentSchool?.filieres || []
-      : form.cycle &&
-        currentSchool?.cycles?.[form.cycle]
+      : form.cycle && currentSchool?.cycles?.[form.cycle]
       ? currentSchool.cycles[form.cycle]
       : []
-
-  const annees =
-    currentSchool?.years || []
-
-  /* =======================================================
-     AFFICHAGE
-  ======================================================= */
+  const annees = currentSchool?.years || []
 
   return (
     <div className="app">
-
       {/* =================================================
-          EN-TÊTE
+          EN-TÊTE IMMERSIF
       ================================================= */}
-
       <header className="header">
-        <img
-          src={logo}
-          alt="Logo Otaku No Kai INP-HB"
-          className="logo"
-        />
-
-        <div className="header-title">
-          <h1>OTAKU NO KAI INP-HB</h1>
+        <div className="header-inner">
+          <div className="logo-badge">
+            <img src={logo} alt="Logo Otaku No Kai INP-HB" className="logo" />
+          </div>
+          <div className="header-title">
+            <span className="header-tag">INP-HB • Club Officiel</span>
+            <h1>OTAKU NO KAI</h1>
+          </div>
         </div>
       </header>
 
       {/* =================================================
           CONTENU PRINCIPAL
       ================================================= */}
-
-            <main className="container">
-
+      <main className="container">
         <div
           className="form-background"
           style={{
@@ -670,726 +485,721 @@ function App() {
           <div className="background-overlay"></div>
 
           <div className="form-content">
-
-        {/* =================================================
-            PAGE D'ACCUEIL
-        ================================================= */}
-
-        {step === 0 && (
-    
-          <section className="card welcome">
-
-            <h2>
-              Bienvenue dans Otaku No Kai INP-HB 🎌
-            </h2>
-
-            <p>
-              Bienvenue dans l’espace d’inscription
-              officiel du club <strong>Otaku No Kai INP-HB</strong>.
-            </p>
-
-            <p>
-              Le club rassemble les étudiants passionnés
-              de mangas, d’animés, de jeux vidéo, de dessin,
-              de musique et de culture japonaise.
-            </p>
-
-            <p>
-              Ici, la passion devient un moyen de partager,
-              d’apprendre, de créer et de relever des défis
-              ensemble.
-            </p>
-
-            <div className="welcome-motto">
-              <strong>
-                « La passion nous lie, le défi nous forge. »
-              </strong>
-            </div>
-
-            <button
-              className="primary-button"
-              onClick={suivant}
-            >
-              🚀 Je rejoins le club
-            </button>
-
-          </section>
-        )}
-
-        {/* =================================================
-            ÉTAPE 1 : INFORMATIONS PERSONNELLES
-        ================================================= */}
-
-        {step === 1 && (
-          <section className="card">
-
-            <h2>👤 Informations personnelles</h2>
-
-            <div className="form-group">
-
-              <label>
-                Nom et prénom(s) *
-              </label>
-
-              <input
-                type="text"
-                value={form.nom}
-                onChange={(e) =>
-                  modifierChamp(
-                    'nom',
-                    e.target.value
-                  )
-                }
-                placeholder="Ex. Konaté Yaya"
-              />
-
-            </div>
-
-            <div className="form-group">
-
-              <label>
-                Matricule *
-              </label>
-
-              <input
-                type="text"
-                value={form.matricule}
-                onChange={(e) =>
-                  modifierChamp(
-                    'matricule',
-                    e.target.value.toUpperCase()
-                  )
-                }
-                placeholder="Ex. 25INP00345"
-                maxLength={10}
-              />
-
-              <small>
-                Matricule INPHB.
-              </small>
-
-            </div>
-
-            {/* ÉCOLE */}
-
-            <div className="form-group">
-
-              <label>
-                École *
-              </label>
-
-              <select
-                value={form.ecole}
-                onChange={(e) =>
-                  changerEcole(e.target.value)
-                }
-              >
-                <option value="">
-                  -- Sélectionner votre école --
-                </option>
-
-                {Object.keys(schoolData).map(
-                  (ecole) => (
-                    <option
-                      key={ecole}
-                      value={ecole}
-                    >
-                      {ecole}
-                    </option>
-                  )
-                )}
-              </select>
-
-            </div>
-
-            {/* CYCLE */}
-
-            {form.ecole &&
-              form.ecole !== 'CPGE' && (
-                <div className="form-group">
-
-                  <label>
-                    Cycle *
-                  </label>
-
-                  <select
-                    value={form.cycle}
-                    onChange={(e) =>
-                      changerCycle(e.target.value)
-                    }
-                  >
-
-                    <option value="">
-                      -- Sélectionner votre cycle --
-                    </option>
-
-                    {cycles.map((cycle) => (
-                      <option
-                        key={cycle}
-                        value={cycle}
-                      >
-                        {cycle}
-                      </option>
-                    ))}
-
-                  </select>
-
+            {/* =================================================
+                STEPPER DE PROGRESSION (ÉTAPES 1 À 5)
+            ================================================= */}
+            {step >= 1 && step <= 5 && (
+              <div className="stepper-wrapper">
+                <div className="stepper-header-info">
+                  <span className="step-badge">Étape {step} sur 5</span>
+                  <span className="step-percentage">{Math.round(((step) / 5) * 100)}% complété</span>
                 </div>
-              )}
 
-            {/* FILIÈRE */}
-
-            {form.ecole &&
-              (
-                form.ecole === 'CPGE' ||
-                (form.cycle &&
-                  filieres.length > 0)
-              ) && (
-                <div className="form-group">
-
-                  <label>
-                    Filière *
-                  </label>
-
-                  <select
-                    value={form.filiere}
-                    onChange={(e) =>
-                      changerFiliere(
-                        e.target.value
-                      )
-                    }
-                  >
-
-                    <option value="">
-                      -- Sélectionner votre filière --
-                    </option>
-
-                    {filieres.map((filiere) => (
-                      <option
-                        key={filiere}
-                        value={filiere}
-                      >
-                        {filiere}
-                      </option>
-                    ))}
-
-                  </select>
-
+                <div className="stepper-track-bar">
+                  <div
+                    className="stepper-progress-fill"
+                    style={{ width: `${((step - 1) / 4) * 100}%` }}
+                  ></div>
                 </div>
-              )}
 
-            {/* ANNÉE */}
-
-            {form.ecole && (
-              <div className="form-group">
-
-                <label>
-                  Année *
-                </label>
-
-                <select
-                  value={form.annee}
-                  onChange={(e) =>
-                    modifierChamp(
-                      'annee',
-                      e.target.value
+                <div className="stepper-nodes">
+                  {STEPS.map((s) => {
+                    const isPassed = step > s.id
+                    const isCurrent = step === s.id
+                    return (
+                      <div
+                        key={s.id}
+                        className={`stepper-node ${isCurrent ? 'current' : ''} ${isPassed ? 'passed' : ''}`}
+                      >
+                        <div className="node-circle">
+                          {isPassed ? '✓' : s.id}
+                        </div>
+                        <span className="node-label">
+                          <span className="node-icon">{s.icon}</span>
+                          <span className="node-text">{s.label}</span>
+                        </span>
+                      </div>
                     )
-                  }
-                >
-
-                  <option value="">
-                    -- Sélectionner votre année --
-                  </option>
-
-                  {annees.map((annee) => (
-                    <option
-                      key={annee}
-                      value={annee}
-                    >
-                      {annee}
-                    </option>
-                  ))}
-
-                </select>
-
+                  })}
+                </div>
               </div>
             )}
 
-            {/* WHATSAPP */}
+            {/* =================================================
+                ÉTAPE 0 : ACCUEIL
+            ================================================= */}
+            {step === 0 && (
+              <section className="card welcome-card">
+                <div className="hero-pill">🎌 Saison 2024-2025 • Adhésions Ouvertes</div>
 
-            <div className="form-group">
+                <h2 className="welcome-title">
+                  Rejoins l'élite des passionnés de culture geek & manga !
+                </h2>
 
-              <label>
-                WhatsApp *
-              </label>
-
-              <input
-                type="tel"
-                value={form.whatsapp}
-                onChange={(e) => {
-                  const chiffres = e.target.value
-                    .replace(/\D/g, '')
-                    .slice(0, 10)
-
-                  const whatsappFormate = chiffres.replace(
-                    /(.{2})(?=.)/g,
-                    '$1 '
-                  )
-
-                  modifierChamp('whatsapp', whatsappFormate)
-                }}
-                placeholder="Ex. 01 73 10 28 95"
-                maxLength={14}
-              />
-
-              <small>
-                Le numéro doit contenir exactement 10 chiffres.
-              </small>
-
-            </div>
-
-            {/* EMAIL */}
-
-            <div className="form-group">
-
-              <label>
-                E-mail <span className="optional">(Facultatif)</span>
-              </label>
-
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) =>
-                  modifierChamp(
-                    'email',
-                    e.target.value
-                  )
-                }
-                placeholder="Ex. exemple@email.com"
-              />
-
-            </div>
-
-          </section>
-        )}
-
-        {/* =================================================
-            ÉTAPE 2 : PASSIONS
-        ================================================= */}
-
-        {step === 2 && (
-          <section className="card">
-
-            <h2>🔥 Tes passions</h2>
-
-            <p>
-              Sélectionne les domaines qui t’intéressent.
-            </p>
-
-            <div className="checkbox-list">
-
-              {interestsList.map(
-                (interest) => (
-                  <label
-                    className="checkbox-item"
-                    key={interest}
-                  >
-
-                    <input
-                      type="checkbox"
-                      checked={form.interests.includes(
-                        interest
-                      )}
-                      onChange={() =>
-                        toggleInterest(
-                          interest
-                        )
-                      }
-                    />
-
-                    <span>
-                      {interest}
-                    </span>
-
-                  </label>
-                )
-              )}
-
-            </div>
-
-          </section>
-        )}
-
-        {/* =================================================
-            ÉTAPE 3 : PARTICIPATION
-        ================================================= */}
-
-        {step === 3 && (
-          <section className="card">
-
-            <h2>🤝 Participation au club</h2>
-
-            <div className="member-choice">
-
-              <button
-                type="button"
-                className={
-                  form.typeMembre === 'membre'
-                    ? 'choice selected'
-                    : 'choice'
-                }
-                onClick={() =>
-                  changerTypeMembre(
-                    'membre'
-                  )
-                }
-              >
-
-                <strong>
-                  🔵 Membre
-                </strong>
-
-                <span>
-                  Je souhaite principalement participer
-                  aux activités et événements du club.
-                </span>
-
-              </button>
-
-              <button
-                type="button"
-                className={
-                  form.typeMembre === 'actif'
-                    ? 'choice selected'
-                    : 'choice'
-                }
-                onClick={() =>
-                  changerTypeMembre(
-                    'actif'
-                  )
-                }
-              >
-
-                <strong>
-                  🟣 Membre actif
-                </strong>
-
-                <span>
-                  Je souhaite contribuer à l’organisation
-                  et aux projets du club.
-                </span>
-
-              </button>
-
-            </div>
-
-            {/* PÔLES */}
-
-            {form.typeMembre === 'actif' && (
-              <div className="poles-section">
-
-                <h3>
-                  Intégration à un pôle
-                </h3>
-
-                <p>
-                  Tu peux choisir jusqu’à deux pôles.
+                <p className="welcome-lead">
+                  Bienvenue dans l’espace d’inscription officiel d’<strong>Otaku No Kai INP-HB</strong>.
+                  Le rassemblement des étudiants passionnés d’animés, jeux vidéo, dessin, cosplay, musique et culture japonaise.
                 </p>
 
-                <div className="checkbox-list">
-
-                  {polesList.map(
-  (pole) => {
-    const poleIndisponible =
-      pole === 'Culture japonaise & Langue'
-
-    return (
-      <label
-        className={`checkbox-item ${
-          poleIndisponible ? 'pole-disabled' : ''
-        }`}
-        key={pole}
-      >
-
-        <input
-          type="checkbox"
-          checked={form.poles.includes(pole)}
-          onChange={() => {
-            if (!poleIndisponible) {
-              togglePole(pole)
-            }
-          }}
-          disabled={
-            poleIndisponible ||
-            (
-              !form.poles.includes(pole) &&
-              form.poles.length >= 2
-            )
-          }
-        />
-
-        <span>
-          {pole}
-
-          {poleIndisponible && (
-            <small className="pole-indisponible">
-              Indisponible pour le moment
-            </small>
-          )}
-        </span>
-
-      </label>
-    )
-  }
-)}
-
+                <div className="welcome-highlights">
+                  <div className="highlight-item">
+                    <span className="highlight-icon">🎮</span>
+                    <strong>Tournois Gaming</strong>
+                    <span>E-sport, Smash, FIFA, Tekken & consoles rétros</span>
+                  </div>
+                  <div className="highlight-item">
+                    <span className="highlight-icon">🎌</span>
+                    <strong>Projections & Débats</strong>
+                    <span>Soirées cinéma d'animation, avant-premières et discussions</span>
+                  </div>
+                  <div className="highlight-item">
+                    <span className="highlight-icon">⛩️</span>
+                    <strong>Culture & Langue</strong>
+                    <span>Ateliers Nihongo, calligraphie et découvertes des traditions</span>
+                  </div>
+                  <div className="highlight-item">
+                    <span className="highlight-icon">🎨</span>
+                    <strong>Création Artistique</strong>
+                    <span>Concours de dessin, planches manga, fanarts et AMV</span>
+                  </div>
                 </div>
 
-                <p className="pole-note">
-                  Sélection actuelle :{' '}
-                  <strong>
-                    {form.poles.length}/2
-                  </strong>
+                <div className="welcome-motto-box">
+                  <span className="motto-quote">«</span>
+                  <p className="motto-text">La passion nous lie, le défi nous forge.</p>
+                  <span className="motto-quote">»</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="primary-button cta-hero-btn"
+                  onClick={suivant}
+                >
+                  <span>🚀 Commencer mon inscription</span>
+                  <span className="btn-glow"></span>
+                </button>
+              </section>
+            )}
+
+            {/* =================================================
+                ÉTAPE 1 : PROFIL & ÉTUDES
+            ================================================= */}
+            {step === 1 && (
+              <section className="card step-card">
+                <div className="card-header">
+                  <div className="card-header-icon">👤</div>
+                  <div>
+                    <h2>Informations personnelles & cursus</h2>
+                    <p className="card-header-subtitle">
+                      Renseigne ton identité et ton parcours académique à l'INP-HB.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="form-section-title">
+                  <span>🪪 Identification</span>
+                </div>
+
+                <div className="form-grid-2">
+                  <div className="form-group">
+                    <label htmlFor="nom">
+                      Nom et prénom(s) <span className="req">*</span>
+                    </label>
+                    <div className="input-with-icon">
+                      <span className="field-icon">👤</span>
+                      <input
+                        id="nom"
+                        type="text"
+                        value={form.nom}
+                        onChange={(e) => modifierChamp('nom', e.target.value)}
+                        placeholder="Ex. Konaté Yaya"
+                        required
+                      />
+                    </div>
+                    <small className="field-hint">Nom de famille suivi de tes prénom(s).</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="matricule">
+                      Matricule INP-HB <span className="req">*</span>
+                    </label>
+                    <div className="input-with-icon">
+                      <span className="field-icon">🪪</span>
+                      <input
+                        id="matricule"
+                        type="text"
+                        value={form.matricule}
+                        onChange={(e) => modifierChamp('matricule', e.target.value.toUpperCase())}
+                        placeholder="Ex. 25INP12345"
+                        maxLength={10}
+                        required
+                      />
+                    </div>
+                    <small className="field-hint">Format officiel 10 caractères (ex: 25INP12345).</small>
+                  </div>
+                </div>
+
+                <div className="form-section-title">
+                  <span>🏛️ Parcours académique</span>
+                </div>
+
+                <div className="form-grid-2">
+                  <div className="form-group">
+                    <label htmlFor="ecole">
+                      École INP-HB <span className="req">*</span>
+                    </label>
+                    <div className="input-with-icon">
+                      <span className="field-icon">🏫</span>
+                      <select
+                        id="ecole"
+                        value={form.ecole}
+                        onChange={(e) => changerEcole(e.target.value)}
+                        required
+                      >
+                        <option value="">-- Choisis ton école --</option>
+                        {Object.keys(schoolData).map((ecole) => (
+                          <option key={ecole} value={ecole}>
+                            {ecole}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {form.ecole && form.ecole !== 'CPGE' && (
+                    <div className="form-group">
+                      <label htmlFor="cycle">
+                        Cycle d'études <span className="req">*</span>
+                      </label>
+                      <div className="input-with-icon">
+                        <span className="field-icon">🎓</span>
+                        <select
+                          id="cycle"
+                          value={form.cycle}
+                          onChange={(e) => changerCycle(e.target.value)}
+                          required
+                        >
+                          <option value="">-- Sélectionne ton cycle --</option>
+                          {cycles.map((cycle) => (
+                            <option key={cycle} value={cycle}>
+                              {cycle}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {form.ecole && (form.ecole === 'CPGE' || (form.cycle && filieres.length > 0)) && (
+                    <div className="form-group">
+                      <label htmlFor="filiere">
+                        Filière <span className="req">*</span>
+                      </label>
+                      <div className="input-with-icon">
+                        <span className="field-icon">📚</span>
+                        <select
+                          id="filiere"
+                          value={form.filiere}
+                          onChange={(e) => changerFiliere(e.target.value)}
+                          required
+                        >
+                          <option value="">-- Sélectionne ta filière --</option>
+                          {filieres.map((filiere) => (
+                            <option key={filiere} value={filiere}>
+                              {filiere}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {form.ecole && (
+                    <div className="form-group">
+                      <label htmlFor="annee">
+                        Année d'études <span className="req">*</span>
+                      </label>
+                      <div className="input-with-icon">
+                        <span className="field-icon">📅</span>
+                        <select
+                          id="annee"
+                          value={form.annee}
+                          onChange={(e) => modifierChamp('annee', e.target.value)}
+                          required
+                        >
+                          <option value="">-- Sélectionne ton année --</option>
+                          {annees.map((annee) => (
+                            <option key={annee} value={annee}>
+                              {annee}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-section-title">
+                  <span>📱 Coordonnées & Contact</span>
+                </div>
+
+                <div className="form-grid-2">
+                  <div className="form-group">
+                    <label htmlFor="whatsapp">
+                      Numéro WhatsApp <span className="req">*</span>
+                    </label>
+                    <div className="input-with-icon">
+                      <span className="field-icon">💬</span>
+                      <input
+                        id="whatsapp"
+                        type="tel"
+                        value={form.whatsapp}
+                        onChange={(e) => {
+                          const chiffres = e.target.value.replace(/\D/g, '').slice(0, 10)
+                          const whatsappFormate = chiffres.replace(/(.{2})(?=.)/g, '$1 ')
+                          modifierChamp('whatsapp', whatsappFormate)
+                        }}
+                        placeholder="Ex. 01 73 10 28 95"
+                        maxLength={14}
+                        required
+                      />
+                    </div>
+                    <small className="field-hint">Format 10 chiffres (requis pour rejoindre le groupe officiel).</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="email">
+                      Adresse E-mail <span className="optional">(Facultatif)</span>
+                    </label>
+                    <div className="input-with-icon">
+                      <span className="field-icon">✉️</span>
+                      <input
+                        id="email"
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => modifierChamp('email', e.target.value)}
+                        placeholder="Ex. exemple@inphb.ci"
+                      />
+                    </div>
+                    <small className="field-hint">Pour recevoir les comptes-rendus et invitations.</small>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* =================================================
+                ÉTAPE 2 : PASSIONS & INTÉRÊTS
+            ================================================= */}
+            {step === 2 && (
+              <section className="card step-card">
+                <div className="card-header">
+                  <div className="card-header-icon">🔥</div>
+                  <div>
+                    <h2>Tes passions & centres d'intérêt</h2>
+                    <p className="card-header-subtitle">
+                      Coche tout ce qui te passionne. Cela nous aidera à adapter les activités du club !
+                    </p>
+                  </div>
+                </div>
+
+                <div className="interests-grid">
+                  {interestsList.map((item) => {
+                    const isSelected = form.interests.includes(item.label)
+                    return (
+                      <button
+                        type="button"
+                        key={item.label}
+                        className={`interest-card ${isSelected ? 'selected' : ''}`}
+                        onClick={() => toggleInterest(item.label)}
+                      >
+                        <div className="interest-top">
+                          <span className="interest-icon">{item.icon}</span>
+                          <div className={`checkbox-chip ${isSelected ? 'checked' : ''}`}>
+                            {isSelected ? '✓' : ''}
+                          </div>
+                        </div>
+                        <span className="interest-title">{item.label}</span>
+                        <span className="interest-desc">{item.desc}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <div className="selection-counter">
+                  <span>Centres d'intérêt choisis : </span>
+                  <strong>{form.interests.length} sélectionné(s)</strong>
+                </div>
+              </section>
+            )}
+
+            {/* =================================================
+                ÉTAPE 3 : RÔLE & PÔLES
+            ================================================= */}
+            {step === 3 && (
+              <section className="card step-card">
+                <div className="card-header">
+                  <div className="card-header-icon">🤝</div>
+                  <div>
+                    <h2>Participation au club</h2>
+                    <p className="card-header-subtitle">
+                      Définis ton niveau d'implication au sein de la communauté Otaku No Kai.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="membership-options">
+                  <div
+                    className={`membership-card ${form.typeMembre === 'membre' ? 'active' : ''}`}
+                    onClick={() => changerTypeMembre('membre')}
+                  >
+                    <div className="membership-header">
+                      <div className="membership-icon-wrapper blue">🔵</div>
+                      <span className="membership-badge">Membre Adhérent</span>
+                    </div>
+                    <h3>Membre Simple</h3>
+                    <p className="membership-desc">
+                      Idéal pour profiter des activités, participer aux tournois gaming, aux projections et échanger avec la communauté.
+                    </p>
+                    <ul className="membership-perks">
+                      <li>✓ Accès aux projections et tournois</li>
+                      <li>✓ Participation aux quiz et concours</li>
+                      <li>✓ Intégration au groupe WhatsApp général</li>
+                    </ul>
+                    <div className="membership-radio">
+                      <div className={`radio-dot ${form.typeMembre === 'membre' ? 'checked' : ''}`}></div>
+                      <span>{form.typeMembre === 'membre' ? 'Option sélectionnée' : 'Choisir cette option'}</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={`membership-card ${form.typeMembre === 'actif' ? 'active' : ''}`}
+                    onClick={() => changerTypeMembre('actif')}
+                  >
+                    <div className="membership-header">
+                      <div className="membership-icon-wrapper purple">🟣</div>
+                      <span className="membership-badge purple-badge">Membre d'Équipe</span>
+                    </div>
+                    <h3>Membre Actif</h3>
+                    <p className="membership-desc">
+                      Idéal pour t’investir, développer tes compétences, organiser les événements et participer aux décisions du club.
+                    </p>
+                    <ul className="membership-perks">
+                      <li>✓ Intégration à un ou deux pôles au choix</li>
+                      <li>✓ Co-organisation des événements majeurs</li>
+                      <li>✓ Valorisation de ton engagement associatif</li>
+                    </ul>
+                    <div className="membership-radio">
+                      <div className={`radio-dot ${form.typeMembre === 'actif' ? 'checked' : ''}`}></div>
+                      <span>{form.typeMembre === 'actif' ? 'Option sélectionnée' : 'Choisir cette option'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {form.typeMembre === 'actif' && (
+                  <div className="poles-block">
+                    <div className="poles-block-header">
+                      <h3>🎯 Intégration à un pôle d'activité</h3>
+                      <p>
+                        Tu peux sélectionner jusqu’à <strong>2 pôles</strong> selon tes talents et motivations.
+                      </p>
+                    </div>
+
+                    <div className="poles-grid">
+                      {polesList.map((pole) => {
+                        const isSelected = form.poles.includes(pole.name)
+                        const isDisabled = pole.disabled || (!isSelected && form.poles.length >= 2)
+
+                        return (
+                          <div
+                            key={pole.name}
+                            className={`pole-card ${isSelected ? 'selected' : ''} ${pole.disabled ? 'pole-unavailable' : ''}`}
+                            onClick={() => {
+                              if (!pole.disabled) {
+                                togglePole(pole.name)
+                              }
+                            }}
+                          >
+                            <div className="pole-top">
+                              <span className="pole-icon">{pole.icon}</span>
+                              <div className={`pole-checkbox ${isSelected ? 'checked' : ''} ${pole.disabled ? 'disabled' : ''}`}>
+                                {isSelected ? '✓' : ''}
+                              </div>
+                            </div>
+                            <strong className="pole-title">{pole.name}</strong>
+                            <p className="pole-desc">{pole.desc}</p>
+                            {pole.disabled && (
+                              <span className="pole-status-tag">⚠️ Indisponible pour le moment</span>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    <div className="pole-summary-counter">
+                      Pôles choisis : <strong>{form.poles.length} / 2 maximum</strong>
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* =================================================
+                ÉTAPE 4 : ENGAGEMENT
+            ================================================= */}
+            {step === 4 && (
+              <section className="card step-card">
+                <div className="card-header">
+                  <div className="card-header-icon">📜</div>
+                  <div>
+                    <h2>Charte d'engagement du club</h2>
+                    <p className="card-header-subtitle">
+                      En rejoignant Otaku No Kai INP-HB, tu t'engages à respecter nos valeurs de bienveillance et d'excellence.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rules-container">
+                  <div className="rule-box">
+                    <span className="rule-num">01</span>
+                    <div>
+                      <strong>Respect mutuel & fraternité</strong>
+                      <p>Traiter l'ensemble des membres, invités et responsables avec courtoisie et esprit de camaraderie.</p>
+                    </div>
+                  </div>
+
+                  <div className="rule-box">
+                    <span className="rule-num">02</span>
+                    <div>
+                      <strong>Respect des Statuts & Règlement</strong>
+                      <p>Observer scrupuleusement les textes régissant la vie associative au sein de l'INP-HB.</p>
+                    </div>
+                  </div>
+
+                  <div className="rule-box">
+                    <span className="rule-num">03</span>
+                    <div>
+                      <strong>Comportement exemplaire</strong>
+                      <p>Adopter une attitude constructive et responsable lors de toutes les séances et sorties du club.</p>
+                    </div>
+                  </div>
+
+                  <div className="rule-box">
+                    <span className="rule-num">04</span>
+                    <div>
+                      <strong>Préservation du matériel</strong>
+                      <p>Prendre le plus grand soin des équipements (consoles, manettes, câbles, projecteurs) et des locaux mis à disposition.</p>
+                    </div>
+                  </div>
+
+                  <div className="rule-box">
+                    <span className="rule-num">05</span>
+                    <div>
+                      <strong>Rayonnement de l'INP-HB</strong>
+                      <p>Contribuer activement à valoriser la culture geek et l'image d'excellence de l'institut polytechnique.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className={`agreement-box ${form.engagement ? 'checked' : ''}`}
+                  onClick={() => modifierChamp('engagement', !form.engagement)}
+                >
+                  <div className={`custom-checkbox ${form.engagement ? 'checked' : ''}`}>
+                    {form.engagement ? '✓' : ''}
+                  </div>
+                  <div className="agreement-text">
+                    <strong>J'ai pris connaissance de ces engagements et je les accepte sans réserve.</strong>
+                    <span>Je m'engage à participer activement et à respecter l'esprit du club.</span>
+                  </div>
+                </div>
+
+                <div className="download-rules-wrap">
+                  <a
+                    href="/reglement-interieur.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="reglement-link-btn"
+                  >
+                    <span>📖 Consulter le Règlement Intérieur officiel (PDF)</span>
+                    <span className="link-ext">↗</span>
+                  </a>
+                </div>
+              </section>
+            )}
+
+            {/* =================================================
+                ÉTAPE 5 : COTISATION & FINALISATION
+            ================================================= */}
+            {step === 5 && (
+              <section className="card step-card">
+                <div className="card-header">
+                  <div className="card-header-icon">💰</div>
+                  <div>
+                    <h2>Cotisation d'adhésion</h2>
+                    <p className="card-header-subtitle">
+                      Dernière étape avant la validation finale de ton inscription.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="fee-card">
+                  <div className="fee-badge">Tarif Associatif Étudiant</div>
+                  <div className="fee-amount">
+                    <span className="fee-val">1 000</span>
+                    <span className="fee-curr">F CFA / mois</span>
+                  </div>
+                  <p className="fee-explanation">
+                    Ta cotisation mensuelle permet de financer le renouvellement des jeux, l'entretien des consoles, les collations lors des événements et les récompenses de nos tournois.
+                  </p>
+                  <div className="fee-perks-grid">
+                    <div className="fee-perk">🎮 Accès illimité aux tournois</div>
+                    <div className="fee-perk">🍿 Collations & événements festifs</div>
+                    <div className="fee-perk">🎁 Lots & trophées pour vainqueurs</div>
+                    <div className="fee-perk">🤝 Soutien direct aux projets</div>
+                  </div>
+                </div>
+
+                <div
+                  className={`agreement-box ${form.cotisation ? 'checked' : ''}`}
+                  onClick={() => modifierChamp('cotisation', !form.cotisation)}
+                >
+                  <div className={`custom-checkbox ${form.cotisation ? 'checked' : ''}`}>
+                    {form.cotisation ? '✓' : ''}
+                  </div>
+                  <div className="agreement-text">
+                    <strong>J'ai bien pris connaissance de la cotisation mensuelle de 1 000 F CFA.</strong>
+                    <span>Je confirme mon engagement financier pour soutenir les activités d'Otaku No Kai.</span>
+                  </div>
+                </div>
+
+                <div className="payment-security-notice">
+                  <span className="notice-icon">ℹ️</span>
+                  <div>
+                    <strong>Aucun paiement en ligne immédiat n'est requis sur cette page.</strong>
+                    <p>Le règlement s'effectue directement auprès du trésorier lors des rassemblements ou via Mobile Money officiel.</p>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* =================================================
+                ÉTAPE 6 : CONFIRMATION & SUCCÈS
+            ================================================= */}
+            {step === 6 && (
+              <section className="card confirmation-card">
+                <div className="conf-icon-pulse">🎌</div>
+
+                <span className="conf-tag">Inscription Enregistrée</span>
+
+                <h2 className="conf-title">Bienvenue dans l'aventure Otaku No Kai !</h2>
+
+                <p className="conf-text">
+                  Félicitations <strong>{form.nom}</strong> ! Ta demande d'adhésion a été enregistrée avec succès dans notre base de données.
                 </p>
 
+                <div className="conf-steps-box">
+                  <h3>Prochaines étapes :</h3>
+                  <div className="conf-step-item">
+                    <span className="conf-step-num">1</span>
+                    <div>
+                      <strong>Intégration WhatsApp</strong>
+                      <p>Tu recevras un message d'accueil sur ton numéro <strong>{form.whatsapp}</strong> avec le lien du groupe officiel.</p>
+                    </div>
+                  </div>
+                  <div className="conf-step-item">
+                    <span className="conf-step-num">2</span>
+                    <div>
+                      <strong>Rassemblement d'accueil</strong>
+                      <p>Consulte nos annonces pour connaître la date de la première réunion de rentrée du club.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="conf-actions">
+                  <button
+                    type="button"
+                    className="primary-button"
+                    onClick={recommencer}
+                  >
+                    <span>Nouvelle inscription</span>
+                  </button>
+                </div>
+              </section>
+            )}
+
+            {/* =================================================
+                MESSAGES D'ALERTE / ERREUR
+            ================================================= */}
+            {erreur && (
+              <div className="alert-box error-alert">
+                <span className="alert-icon">⚠️</span>
+                <span className="alert-text">{erreur}</span>
               </div>
             )}
 
-          </section>
-        )}
+            {message && (
+              <div className="alert-box success-alert">
+                <span className="alert-icon">✅</span>
+                <span className="alert-text">{message}</span>
+              </div>
+            )}
 
-        {/* =================================================
-            ÉTAPE 4 : ENGAGEMENT
-        ================================================= */}
+            {/* =================================================
+                BARRE DE NAVIGATION DU FORMULAIRE
+            ================================================= */}
+            {step > 0 && step < 6 && (
+              <div className="navigation-bar">
+                <button
+                  type="button"
+                  className="nav-btn secondary-btn"
+                  onClick={precedent}
+                  disabled={chargement}
+                >
+                  <span>← Retour</span>
+                </button>
 
-        {step === 4 && (
-          <section className="card">
+                <div className="nav-step-indicator">
+                  <span>Étape {step} sur 5</span>
+                </div>
 
-            <h2>📜 Engagement</h2>
-
-            <p>
-              En rejoignant Otaku No Kai INP-HB,
-              chaque membre s’engage à :
-            </p>
-
-            <ul className="engagement-list">
-
-              <li>
-                Respecter les membres et les responsables.
-              </li>
-
-              <li>
-                Respecter les Statuts et le Règlement Intérieur.
-              </li>
-
-              <li>
-                Adopter un comportement respectueux
-                pendant les activités.
-              </li>
-
-              <li>
-                Préserver les biens du club et de l’INP-HB.
-              </li>
-
-              <li>
-                Contribuer à la bonne image du club
-                et de l’INP-HB.
-              </li>
-
-            </ul>
-
-            <label className="agreement">
-
-              <input
-                type="checkbox"
-                checked={form.engagement}
-                onChange={(e) =>
-                  modifierChamp(
-                    'engagement',
-                    e.target.checked
-                  )
-                }
-              />
-
-              <span>
-                J’ai pris connaissance de ces engagements
-                et je les accepte.
-              </span>
-
-            </label>
-
-            <a
-              className="reglement"
-              href="/reglement-interieur.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              📖 Consulter le Règlement Intérieur
-            </a>
-
-          </section>
-        )}
-
-        {/* =================================================
-            ÉTAPE 5 : COTISATION
-        ================================================= */}
-
-        {step === 5 && (
-          <section className="card">
-
-            <h2>💰 Cotisation</h2>
-
-            <div className="cotisation-box">
-
-              <strong>
-                1 000 F CFA / mois
-              </strong>
-
-              <p>
-                La cotisation mensuelle contribue au
-                fonctionnement du club et à la réalisation
-                de ses activités.
-              </p>
-
-              <p>
-                Des contributions exceptionnelles peuvent
-                éventuellement être demandées pour certaines
-                activités, après information des membres.
-              </p>
-
-            </div>
-
-            <label className="agreement">
-
-              <input
-                type="checkbox"
-                checked={form.cotisation}
-                onChange={(e) =>
-                  modifierChamp(
-                    'cotisation',
-                    e.target.checked
-                  )
-                }
-              />
-
-              <span>
-                Oui, j’ai pris connaissance de la cotisation
-                de 1 000 F CFA / mois.
-              </span>
-
-            </label>
-
-            <p className="payment-note">
-              ℹ️ Aucun paiement n’est effectué sur ce formulaire.
-            </p>
-
-          </section>
-        )}
-
-        {/* =================================================
-            ÉTAPE 6 : CONFIRMATION
-        ================================================= */}
-
-        {step === 6 && (
-          <section className="card confirmation">
-
-            <div className="success-icon">
-              🎌
-            </div>
-
-            <h2>
-              Bienvenue dans Otaku No Kai INP-HB !
-            </h2>
-
-            <p>
-              Ton inscription a bien été enregistrée.
-            </p>
-
-            <p>
-              La participation aux activités du club est
-              ouverte à tous les membres à jour de leur
-              cotisation.
-            </p>
-
-            <p>
-              Pense donc à maintenir ta cotisation à jour
-              afin de profiter pleinement des activités
-              et événements du club.
-            </p>
-
-          </section>
-        )}
-
-        {/* =================================================
-            MESSAGE D'ERREUR
-        ================================================= */}
-
-        {erreur && (
-          <div className="error-message">
-            ⚠️ {erreur}
-          </div>
-        )}
-
-        {/* =================================================
-            MESSAGE
-        ================================================= */}
-
-        {message && (
-          <div className="success-message">
-            ✅ {message}
-          </div>
-        )}
-
-        {/* =================================================
-            NAVIGATION
-        ================================================= */}
-
-                {step > 0 && step < 6 && (
-          <div className="navigation">
-
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={precedent}
-              disabled={chargement}
-            >
-              ← Retour
-            </button>
-
-            <button
-  type="button"
-  className="primary-button"
-  onClick={suivant}
-  disabled={chargement || !etapeValide()}
->
-  {chargement
-    ? '⏳ Enregistrement...'
-    : step === 5
-      ? '🎌 Valider mon inscription'
-      : 'Continuer →'}
-</button>
-
-          </div>
-        )}
-
+                <button
+                  type="button"
+                  className={`nav-btn primary-btn ${!etapeValide() ? 'btn-disabled' : ''}`}
+                  onClick={suivant}
+                  disabled={chargement || !etapeValide()}
+                >
+                  {chargement ? (
+                    <span className="loading-state">
+                      <span className="spinner"></span>
+                      <span>Enregistrement...</span>
+                    </span>
+                  ) : step === 5 ? (
+                    <span>🎌 Valider mon inscription</span>
+                  ) : (
+                    <span>Continuer →</span>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
-
       </main>
 
       {/* =================================================
-          PIED DE PAGE
+          PIED DE PAGE MODERNE
       ================================================= */}
-
       <footer className="footer">
-
-        <p>
-          OTAKU NO KAI INP-HB
-        </p>
-
+        <div className="footer-inner">
+          <p className="footer-brand">
+            <strong>OTAKU NO KAI</strong> — INP-HB Yamoussoukro
+          </p>
+          <p className="footer-copy">
+            Association étudiante officielle • Passion, Culture & Partage
+          </p>
+        </div>
       </footer>
-
     </div>
   )
 }
+
 export default App
