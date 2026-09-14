@@ -1093,3 +1093,29 @@ body {
     font-size: 16px;
   }
 }
+
+.pole-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.pole-disabled input {
+  cursor: not-allowed;
+}
+
+.pole-indisponible {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+
+
+
+
+
+
+
+

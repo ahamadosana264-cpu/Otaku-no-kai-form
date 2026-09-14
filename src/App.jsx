@@ -1099,35 +1099,49 @@ function App() {
                 <div className="checkbox-list">
 
                   {polesList.map(
-                    (pole) => (
-                      <label
-                        className="checkbox-item"
-                        key={pole}
-                      >
+  (pole) => {
+    const poleIndisponible =
+      pole === 'Culture japonaise & Langue'
 
-                        <input
-                          type="checkbox"
-                          checked={form.poles.includes(
-                            pole
-                          )}
-                          onChange={() =>
-                            togglePole(pole)
-                          }
-                          disabled={
-                            !form.poles.includes(
-                              pole
-                            ) &&
-                            form.poles.length >= 2
-                          }
-                        />
+    return (
+      <label
+        className={`checkbox-item ${
+          poleIndisponible ? 'pole-disabled' : ''
+        }`}
+        key={pole}
+      >
 
-                        <span>
-                          {pole}
-                        </span>
+        <input
+          type="checkbox"
+          checked={form.poles.includes(pole)}
+          onChange={() => {
+            if (!poleIndisponible) {
+              togglePole(pole)
+            }
+          }}
+          disabled={
+            poleIndisponible ||
+            (
+              !form.poles.includes(pole) &&
+              form.poles.length >= 2
+            )
+          }
+        />
 
-                      </label>
-                    )
-                  )}
+        <span>
+          {pole}
+
+          {poleIndisponible && (
+            <small className="pole-indisponible">
+              Indisponible pour le moment
+            </small>
+          )}
+        </span>
+
+      </label>
+    )
+  }
+)}
 
                 </div>
 
