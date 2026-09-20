@@ -13,8 +13,7 @@ import Seven from './assets/Seven.jpg'
 import Eight from './assets/Eight.jpg'
 
 const SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbzculpkO9QZSbC0WtSlJET8xSZE9TjZZcc2ds0sIyvRz866Wv6aGQ9kvznipGAdTNZ1Zg/exec'
-
+  "https://script.google.com/macros/s/AKfycbxKTVg6KzR9a-kP6Wse9IAGT2nI54128vE9HrI9EjFa8shzavpVOJUH2suRP32zudbT/exec"
 /* =========================================================
    DONNÉES ÉCOLES INP-HB
 ========================================================= */
@@ -125,10 +124,8 @@ const polesList = [
 
 const STEPS = [
   { id: 1, label: 'Profil', icon: '👤' },
-  { id: 2, label: 'Passions', icon: '🔥' },
-  { id: 3, label: 'Rôle', icon: '🤝' },
-  { id: 4, label: 'Règles', icon: '📜' },
-  { id: 5, label: 'Cotisation', icon: '💰' },
+  { id: 2, label: 'Règles', icon: '📜' },
+  { id: 3, label: 'Cotisation', icon: '💰' },
 ]
 
 /* =========================================================
@@ -141,8 +138,7 @@ const stepImages = {
   2: Two,
   3: Three,
   4: Four,
-  5: Five,
-  6: Six,
+  5: Six,
   7: Seven,
   8: Eight,
 }
@@ -267,20 +263,8 @@ function App() {
   const whatsappValide = (whatsapp) => /^\d{10}$/.test(whatsapp.replace(/\s/g, ''))
 
   const formationValide = () => {
-    if (!form.ecole) return false
-    const data = schoolData[form.ecole]
-    if (!data) return false
-
-    /* Cas spécifique CPGE (pas de cycle) */
-    if (form.ecole === 'CPGE') {
-      return form.filiere !== '' && form.annee !== ''
-    }
-
-    /* Autres écoles */
-    if (!form.cycle || !form.annee) return false
-    const filieres = data.cycles[form.cycle]
-    if (filieres === null) return true
-    return form.filiere !== ''
+    // Pour le moment, seul le choix de l'école est demandé.
+    return form.ecole !== '' && !!schoolData[form.ecole]
   }
 
   /* Contrôle de validité pour activer le bouton Suivant */
@@ -293,10 +277,8 @@ function App() {
         whatsappValide(form.whatsapp)
       )
     }
-    if (step === 2) return form.interests.length > 0
-    if (step === 3) return form.typeMembre !== ''
-    if (step === 4) return form.engagement
-    if (step === 5) return form.cotisation
+    if (step === 2) return form.engagement
+    if (step === 3) return form.cotisation
     return true
   }
 
@@ -315,7 +297,7 @@ function App() {
         return false
       }
       if (!formationValide()) {
-        setErreur('Veuillez sélectionner votre école, cycle, filière et année d’études.')
+        setErreur('Veuillez sélectionner votre école.')
         return false
       }
       if (!whatsappValide(form.whatsapp)) {
@@ -326,26 +308,6 @@ function App() {
     }
 
     if (step === 2) {
-      if (form.interests.length === 0) {
-        setErreur('Sélectionnez au moins un centre d’intérêt.')
-        return false
-      }
-      return true
-    }
-
-    if (step === 3) {
-      if (!form.typeMembre) {
-        setErreur('Veuillez sélectionner un type de membre (Membre ou Membre actif).')
-        return false
-      }
-      if (form.typeMembre === 'actif' && form.poles.length > 2) {
-        setErreur('Vous pouvez sélectionner au maximum deux pôles.')
-        return false
-      }
-      return true
-    }
-
-    if (step === 4) {
       if (!form.engagement) {
         setErreur('Vous devez accepter les engagements du club pour poursuivre.')
         return false
@@ -353,7 +315,7 @@ function App() {
       return true
     }
 
-    if (step === 5) {
+    if (step === 3) {
       if (!form.cotisation) {
         setErreur('Veuillez confirmer que vous avez pris connaissance de la cotisation.')
         return false
@@ -374,14 +336,8 @@ function App() {
       nomPrenom: form.nom.trim(),
       matricule: form.matricule.trim().toUpperCase(),
       ecole: form.ecole,
-      cycle: form.cycle || 'N/A',
-      filiere: form.filiere || 'N/A',
-      annee: form.annee,
       whatsapp: form.whatsapp.replace(/\s/g, '').trim(),
       email: form.email ? form.email.trim() : 'Non renseigné',
-      centresInteret: form.interests.join(' ; '),
-      typeMembre: form.typeMembre === 'actif' ? 'Membre actif' : 'Membre',
-      poles: form.poles.length > 0 ? form.poles.join(' ; ') : 'Aucun pour le moment',
     }
 
     try {
@@ -415,10 +371,10 @@ function App() {
   const suivant = async () => {
     if (!validerEtape()) return
 
-    if (step === 5) {
+    if (step === 3) {
       const succes = await envoyerInscription()
       if (succes) {
-        setStep(6)
+        setStep(4)
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
       return
@@ -451,8 +407,8 @@ function App() {
     form.ecole === 'CPGE'
       ? currentSchool?.filieres || []
       : form.cycle && currentSchool?.cycles?.[form.cycle]
-      ? currentSchool.cycles[form.cycle]
-      : []
+        ? currentSchool.cycles[form.cycle]
+        : []
   const annees = currentSchool?.years || []
 
   return (
@@ -486,13 +442,13 @@ function App() {
 
           <div className="form-content">
             {/* =================================================
-                STEPPER DE PROGRESSION (ÉTAPES 1 À 5)
+                STEPPER DE PROGRESSION (ÉTAPES 1 À 3)
             ================================================= */}
-            {step >= 1 && step <= 5 && (
+            {step >= 1 && step <= 3 && (
               <div className="stepper-wrapper">
                 <div className="stepper-header-info">
-                  <span className="step-badge">Étape {step} sur 5</span>
-                  <span className="step-percentage">{Math.round(((step) / 5) * 100)}% complété</span>
+                  <span className="step-badge">Étape {step} sur 4</span>
+                  <span className="step-percentage">{Math.round(((step) / 4) * 100)}% complété</span>
                 </div>
 
                 <div className="stepper-track-bar">
@@ -640,7 +596,7 @@ function App() {
                 </div>
 
                 <div className="form-section-title">
-                  <span>🏛️ Parcours académique</span>
+                  <span>🏛️ Établissement</span>
                 </div>
 
                 <div className="form-grid-2">
@@ -666,6 +622,7 @@ function App() {
                     </div>
                   </div>
 
+                  {/* Champs académiques masqués temporairement — à réactiver plus tard.
                   {form.ecole && form.ecole !== 'CPGE' && (
                     <div className="form-group">
                       <label htmlFor="cycle">
@@ -739,6 +696,10 @@ function App() {
                   )}
                 </div>
 
+                  */}
+
+                </div>
+
                 <div className="form-section-title">
                   <span>📱 Coordonnées & Contact</span>
                 </div>
@@ -787,9 +748,8 @@ function App() {
               </section>
             )}
 
-            {/* =================================================
-                ÉTAPE 2 : PASSIONS & INTÉRÊTS
-            ================================================= */}
+            {/*
+            Étape Passions masquée temporairement — à réactiver plus tard.
             {step === 2 && (
               <section className="card step-card">
                 <div className="card-header">
@@ -832,9 +792,9 @@ function App() {
               </section>
             )}
 
-            {/* =================================================
-                ÉTAPE 3 : RÔLE & PÔLES
-            ================================================= */}
+            */}
+
+            {/*
             {step === 3 && (
               <section className="card step-card">
                 <div className="card-header">
@@ -943,10 +903,11 @@ function App() {
               </section>
             )}
 
+            */}
             {/* =================================================
-                ÉTAPE 4 : ENGAGEMENT
+                ÉTAPE 2 : ENGAGEMENT
             ================================================= */}
-            {step === 4 && (
+            {step === 2 && (
               <section className="card step-card">
                 <div className="card-header">
                   <div className="card-header-icon">📜</div>
@@ -1013,6 +974,7 @@ function App() {
                   </div>
                 </div>
 
+                {/* Option « Consulter le Règlement Intérieur » masquée temporairement — à réactiver plus tard.
                 <div className="download-rules-wrap">
                   <a
                     href="/reglement-interieur.pdf"
@@ -1024,13 +986,14 @@ function App() {
                     <span className="link-ext">↗</span>
                   </a>
                 </div>
+                */}
               </section>
             )}
 
             {/* =================================================
-                ÉTAPE 5 : COTISATION & FINALISATION
+                ÉTAPE 3 : COTISATION & FINALISATION
             ================================================= */}
-            {step === 5 && (
+            {step === 3 && (
               <section className="card step-card">
                 <div className="card-header">
                   <div className="card-header-icon">💰</div>
@@ -1083,9 +1046,9 @@ function App() {
             )}
 
             {/* =================================================
-                ÉTAPE 6 : CONFIRMATION & SUCCÈS
+                ÉTAPE 4 : CONFIRMATION & SUCCÈS
             ================================================= */}
-            {step === 6 && (
+            {step === 4 && (
               <section className="card confirmation-card">
                 <div className="conf-icon-pulse">🎌</div>
 
@@ -1147,7 +1110,7 @@ function App() {
             {/* =================================================
                 BARRE DE NAVIGATION DU FORMULAIRE
             ================================================= */}
-            {step > 0 && step < 6 && (
+            {step > 0 && step < 4 && (
               <div className="navigation-bar">
                 <button
                   type="button"
@@ -1159,7 +1122,7 @@ function App() {
                 </button>
 
                 <div className="nav-step-indicator">
-                  <span>Étape {step} sur 5</span>
+                  <span>Étape {step} sur 4</span>
                 </div>
 
                 <button
@@ -1173,7 +1136,7 @@ function App() {
                       <span className="spinner"></span>
                       <span>Enregistrement...</span>
                     </span>
-                  ) : step === 5 ? (
+                  ) : step === 3 ? (
                     <span>🎌 Valider mon inscription</span>
                   ) : (
                     <span>Continuer →</span>
