@@ -12,8 +12,7 @@ import Six from './assets/Six.jpg'
 import Seven from './assets/Seven.jpg'
 import Eight from './assets/Eight.jpg'
 
-const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxKTVg6KzR9a-kP6Wse9IAGT2nI54128vE9HrI9EjFa8shzavpVOJUH2suRP32zudbT/exec"
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYKZOnXtuzpo3Gzg6MsrFHJM24v9hFJg9ubP8ZStr7rWDbEmlaoFwT4YLehr5V_vt5/exec"
 /* =========================================================
    DONNÉES ÉCOLES INP-HB
 ========================================================= */
@@ -447,14 +446,14 @@ function App() {
             {step >= 1 && step <= 3 && (
               <div className="stepper-wrapper">
                 <div className="stepper-header-info">
-                  <span className="step-badge">Étape {step} sur 4</span>
-                  <span className="step-percentage">{Math.round(((step) / 4) * 100)}% complété</span>
+                  <span className="step-badge">Étape {step} sur 3</span>
+                  <span className="step-percentage">{Math.round(((step) / 3) * 100)}% complété</span>
                 </div>
 
                 <div className="stepper-track-bar">
                   <div
                     className="stepper-progress-fill"
-                    style={{ width: `${((step - 1) / 4) * 100}%` }}
+                    style={{ width: `${((step - 1) / 3) * 100}%` }}
                   ></div>
                 </div>
 
@@ -486,7 +485,7 @@ function App() {
             ================================================= */}
             {step === 0 && (
               <section className="card welcome-card">
-                <div className="hero-pill">🎌 Saison 2024-2025 • Adhésions Ouvertes</div>
+                <div className="hero-pill">🎌 Saison 2026-2027 • Adhésions Ouvertes</div>
 
                 <h2 className="welcome-title">
                   Rejoins l'élite des passionnés de culture geek & manga !
@@ -501,22 +500,22 @@ function App() {
                   <div className="highlight-item">
                     <span className="highlight-icon">🎮</span>
                     <strong>Tournois Gaming</strong>
-                    <span>E-sport, Smash, FIFA, Tekken & consoles rétros</span>
+                    <span>Tournois FIFA, Naruto Storm, Dragon Ball FighterZ & gaming</span>
                   </div>
                   <div className="highlight-item">
                     <span className="highlight-icon">🎌</span>
                     <strong>Projections & Débats</strong>
-                    <span>Soirées cinéma d'animation, avant-premières et discussions</span>
+                    <span>Scènes iconiques, débats thématiques et discussions</span>
                   </div>
                   <div className="highlight-item">
                     <span className="highlight-icon">⛩️</span>
                     <strong>Culture & Langue</strong>
-                    <span>Ateliers Nihongo, calligraphie et découvertes des traditions</span>
+                    <span>Initiation au japonais, calligraphie et découvertes culturelles</span>
                   </div>
                   <div className="highlight-item">
                     <span className="highlight-icon">🎨</span>
                     <strong>Création Artistique</strong>
-                    <span>Concours de dessin, planches manga, fanarts et AMV</span>
+                    <span>Concours de dessin, manga, fanarts et création</span>
                   </div>
                 </div>
 
@@ -545,9 +544,9 @@ function App() {
                 <div className="card-header">
                   <div className="card-header-icon">👤</div>
                   <div>
-                    <h2>Informations personnelles & cursus</h2>
+                    <h2>Informations personnelles</h2>
                     <p className="card-header-subtitle">
-                      Renseigne ton identité et ton parcours académique à l'INP-HB.
+                      Renseigne tes informations pour rejoindre le club.
                     </p>
                   </div>
                 </div>
@@ -956,7 +955,7 @@ function App() {
                     <span className="rule-num">05</span>
                     <div>
                       <strong>Rayonnement de l'INP-HB</strong>
-                      <p>Contribuer activement à valoriser la culture geek et l'image d'excellence de l'institut polytechnique.</p>
+                      <p>Préserver la bonne image du club et de l'INP-HB par un comportement responsable.</p>
                     </div>
                   </div>
                 </div>
@@ -970,7 +969,7 @@ function App() {
                   </div>
                   <div className="agreement-text">
                     <strong>J'ai pris connaissance de ces engagements et je les accepte sans réserve.</strong>
-                    <span>Je m'engage à participer activement et à respecter l'esprit du club.</span>
+                    <span>Je m'engage à respecter les règles et l'esprit du club.</span>
                   </div>
                 </div>
 
@@ -1012,13 +1011,13 @@ function App() {
                     <span className="fee-curr">F CFA / mois</span>
                   </div>
                   <p className="fee-explanation">
-                    Ta cotisation mensuelle permet de financer le renouvellement des jeux, l'entretien des consoles, les collations lors des événements et les récompenses de nos tournois.
+                    La cotisation mensuelle contribue au fonctionnement du club et à la réalisation de ses activités.
                   </p>
                   <div className="fee-perks-grid">
-                    <div className="fee-perk">🎮 Accès illimité aux tournois</div>
-                    <div className="fee-perk">🍿 Collations & événements festifs</div>
-                    <div className="fee-perk">🎁 Lots & trophées pour vainqueurs</div>
-                    <div className="fee-perk">🤝 Soutien direct aux projets</div>
+                    <div className="fee-perk">🎮 Participation aux activités</div>
+                    <div className="fee-perk">🎌 Activités et événements du club</div>
+                    <div className="fee-perk">🏆 Concours et tournois</div>
+                    <div className="fee-perk">🤝 Soutien aux projets du club</div>
                   </div>
                 </div>
 
@@ -1031,7 +1030,7 @@ function App() {
                   </div>
                   <div className="agreement-text">
                     <strong>J'ai bien pris connaissance de la cotisation mensuelle de 1 000 F CFA.</strong>
-                    <span>Je confirme mon engagement financier pour soutenir les activités d'Otaku No Kai.</span>
+                    <span>Je confirme avoir pris connaissance de cette cotisation.</span>
                   </div>
                 </div>
 
@@ -1039,7 +1038,7 @@ function App() {
                   <span className="notice-icon">ℹ️</span>
                   <div>
                     <strong>Aucun paiement en ligne immédiat n'est requis sur cette page.</strong>
-                    <p>Le règlement s'effectue directement auprès du trésorier lors des rassemblements ou via Mobile Money officiel.</p>
+                    <p>Les modalités de paiement seront communiquées directement par le bureau du club.</p>
                   </div>
                 </div>
               </section>
@@ -1054,26 +1053,34 @@ function App() {
 
                 <span className="conf-tag">Inscription Enregistrée</span>
 
-                <h2 className="conf-title">Bienvenue dans l'aventure Otaku No Kai !</h2>
+                <h2 className="conf-title">Bienvenue dans Otaku No Kai INP-HB !</h2>
 
                 <p className="conf-text">
-                  Félicitations <strong>{form.nom}</strong> ! Ta demande d'adhésion a été enregistrée avec succès dans notre base de données.
+                  Ton inscription a bien été enregistrée.
+                </p>
+
+                <p className="conf-text">
+                  La participation aux activités du club est ouverte à tous les membres à jour de leur cotisation.
+                </p>
+
+                <p className="conf-text">
+                  Pense donc à maintenir ta cotisation à jour afin de profiter pleinement des activités et événements du club.
                 </p>
 
                 <div className="conf-steps-box">
-                  <h3>Prochaines étapes :</h3>
+                  <h3>À retenir :</h3>
                   <div className="conf-step-item">
                     <span className="conf-step-num">1</span>
                     <div>
-                      <strong>Intégration WhatsApp</strong>
-                      <p>Tu recevras un message d'accueil sur ton numéro <strong>{form.whatsapp}</strong> avec le lien du groupe officiel.</p>
+                      <strong>Groupe WhatsApp</strong>
+                      <p>Les informations relatives au groupe officiel te seront communiquées ultérieurement.</p>
                     </div>
                   </div>
                   <div className="conf-step-item">
                     <span className="conf-step-num">2</span>
                     <div>
-                      <strong>Rassemblement d'accueil</strong>
-                      <p>Consulte nos annonces pour connaître la date de la première réunion de rentrée du club.</p>
+                      <strong>Suite de l'inscription</strong>
+                      <p>Les prochaines informations et activités du club seront communiquées aux membres.</p>
                     </div>
                   </div>
                 </div>
@@ -1122,7 +1129,7 @@ function App() {
                 </button>
 
                 <div className="nav-step-indicator">
-                  <span>Étape {step} sur 4</span>
+                  <span>Étape {step} sur 3</span>
                 </div>
 
                 <button
