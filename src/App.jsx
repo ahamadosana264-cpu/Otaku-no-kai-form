@@ -1068,27 +1068,29 @@ function App() {
                 </p>
 
                 <div className="conf-steps-box">
-                  <h3>À retenir :</h3>
+                  <h3>Prochaine étape</h3>
                   <div className="conf-step-item">
                     <span className="conf-step-num">1</span>
                     <div>
-                      <strong>Groupe WhatsApp</strong>
-                      <p>Les informations relatives au groupe officiel te seront communiquées ultérieurement.</p>
-                    </div>
-                  </div>
-                  <div className="conf-step-item">
-                    <span className="conf-step-num">2</span>
-                    <div>
-                      <strong>Suite de l'inscription</strong>
-                      <p>Les prochaines informations et activités du club seront communiquées aux membres.</p>
+                      <strong>Rejoins le groupe WhatsApp officiel</strong>
+                      <p>Retrouve les autres membres et reçois les informations sur les activités du club.</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="conf-actions">
+                  <a
+                    className="primary-button whatsapp-join-button"
+                    href="https://chat.whatsapp.com/Cwnl8aZPyrc8HFEIi7tctv?s=cl&p=a&mlu=4&ilr=4"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>💬 Rejoindre le groupe WhatsApp</span>
+                  </a>
+
                   <button
                     type="button"
-                    className="primary-button"
+                    className="secondary-button"
                     onClick={recommencer}
                   >
                     <span>Nouvelle inscription</span>
