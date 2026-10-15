@@ -1088,13 +1088,6 @@ function App() {
                     <span>💬 Rejoindre le groupe WhatsApp</span>
                   </a>
 
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={recommencer}
-                  >
-                    <span>Nouvelle inscription</span>
-                  </button>
                 </div>
               </section>
             )}
