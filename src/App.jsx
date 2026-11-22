@@ -316,7 +316,7 @@ function App() {
 
     if (step === 3) {
       if (!form.cotisation) {
-        setErreur('Veuillez confirmer que vous avez pris connaissance de la cotisation.')
+        setErreur('Veuillez confirmer votre engagement à verser une cotisation mensuelle.')
         return false
       }
       return true
@@ -1005,20 +1005,11 @@ function App() {
                 </div>
 
                 <div className="fee-card">
-                  <div className="fee-badge">Tarif Associatif Étudiant</div>
-                  <div className="fee-amount">
-                    <span className="fee-val">1 000</span>
-                    <span className="fee-curr">F CFA / mois</span>
-                  </div>
+                  <div className="fee-badge">🤝 Engagement au sein du club</div>
                   <p className="fee-explanation">
                     La cotisation mensuelle contribue au fonctionnement du club et à la réalisation de ses activités.
+                    En adhérant à Otaku No Kai INP-HB, chaque membre s'engage à verser régulièrement sa cotisation mensuelle.
                   </p>
-                  <div className="fee-perks-grid">
-                    <div className="fee-perk">🎮 Participation aux activités</div>
-                    <div className="fee-perk">🎌 Activités et événements du club</div>
-                    <div className="fee-perk">🏆 Concours et tournois</div>
-                    <div className="fee-perk">🤝 Soutien aux projets du club</div>
-                  </div>
                 </div>
 
                 <div
@@ -1029,16 +1020,8 @@ function App() {
                     {form.cotisation ? '✓' : ''}
                   </div>
                   <div className="agreement-text">
-                    <strong>J'ai bien pris connaissance de la cotisation mensuelle de 1 000 F CFA.</strong>
-                    <span>Je confirme avoir pris connaissance de cette cotisation.</span>
-                  </div>
-                </div>
-
-                <div className="payment-security-notice">
-                  <span className="notice-icon">ℹ️</span>
-                  <div>
-                    <strong>Aucun paiement en ligne immédiat n'est requis sur cette page.</strong>
-                    <p>Les modalités de paiement seront communiquées directement par le bureau du club.</p>
+                    <strong>Je m'engage à verser régulièrement ma cotisation mensuelle au club.</strong>
+                    <span>Je confirme mon engagement à contribuer au fonctionnement et aux activités de l'association.</span>
                   </div>
                 </div>
               </section>
