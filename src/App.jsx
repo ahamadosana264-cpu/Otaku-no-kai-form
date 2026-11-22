@@ -493,7 +493,6 @@ function App() {
 
                 <p className="welcome-lead">
                   Bienvenue dans l’espace d’inscription officiel d’<strong>Otaku No Kai INP-HB</strong>.
-                  Le rassemblement des étudiants passionnés d’animés, jeux vidéo, dessin, cosplay, musique et culture japonaise.
                 </p>
 
                 <div className="welcome-highlights">
@@ -545,9 +544,6 @@ function App() {
                   <div className="card-header-icon">👤</div>
                   <div>
                     <h2>Informations personnelles</h2>
-                    <p className="card-header-subtitle">
-                      Renseigne tes informations pour rejoindre le club.
-                    </p>
                   </div>
                 </div>
 
@@ -571,7 +567,6 @@ function App() {
                         required
                       />
                     </div>
-                    <small className="field-hint">Nom de famille suivi de tes prénom(s).</small>
                   </div>
 
                   <div className="form-group">
@@ -724,7 +719,7 @@ function App() {
                         required
                       />
                     </div>
-                    <small className="field-hint">Format 10 chiffres (requis pour rejoindre le groupe officiel).</small>
+                    <small className="field-hint">Format 10 chiffres.</small>
                   </div>
 
                   <div className="form-group">
@@ -741,7 +736,7 @@ function App() {
                         placeholder="Ex. exemple@inphb.ci"
                       />
                     </div>
-                    <small className="field-hint">Pour recevoir les comptes-rendus et invitations.</small>
+                    <small className="field-hint"> recommandé</small>
                   </div>
                 </div>
               </section>
@@ -931,7 +926,6 @@ function App() {
                     <span className="rule-num">02</span>
                     <div>
                       <strong>Respect des Statuts & Règlement</strong>
-                      <p>Observer scrupuleusement les textes régissant la vie associative au sein de l'INP-HB.</p>
                     </div>
                   </div>
 
@@ -939,7 +933,6 @@ function App() {
                     <span className="rule-num">03</span>
                     <div>
                       <strong>Comportement exemplaire</strong>
-                      <p>Adopter une attitude constructive et responsable lors de toutes les séances et sorties du club.</p>
                     </div>
                   </div>
 
@@ -968,7 +961,7 @@ function App() {
                     {form.engagement ? '✓' : ''}
                   </div>
                   <div className="agreement-text">
-                    <strong>J'ai pris connaissance de ces engagements et je les accepte sans réserve.</strong>
+                    <strong>Engagements.</strong>
                     <span>Je m'engage à respecter les règles et l'esprit du club.</span>
                   </div>
                 </div>
@@ -999,7 +992,7 @@ function App() {
                   <div>
                     <h2>Cotisation d'adhésion</h2>
                     <p className="card-header-subtitle">
-                      Dernière étape avant la validation finale de ton inscription.
+                      Dernière étape de ton inscription.
                     </p>
                   </div>
                 </div>
@@ -1008,7 +1001,6 @@ function App() {
                   <div className="fee-badge">🤝 Engagement au sein du club</div>
                   <p className="fee-explanation">
                     La cotisation mensuelle contribue au fonctionnement du club et à la réalisation de ses activités.
-                    En adhérant à Otaku No Kai INP-HB, chaque membre s'engage à verser régulièrement sa cotisation mensuelle.
                   </p>
                 </div>
 
@@ -1021,7 +1013,6 @@ function App() {
                   </div>
                   <div className="agreement-text">
                     <strong>Je m'engage à verser régulièrement ma cotisation mensuelle au club.</strong>
-                    <span>Je confirme mon engagement à contribuer au fonctionnement et aux activités de l'association.</span>
                   </div>
                 </div>
               </section>
